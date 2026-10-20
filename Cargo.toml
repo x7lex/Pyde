@@ -1,3 +1,6 @@
 [workspace]
-resolver = "3"
-members = ["crates/*"]
+resolver = "2"
+members = [
+    "crates/core",
+    "crates/wasm",
+]

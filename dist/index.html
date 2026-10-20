@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pyde</title>
+  <link rel="stylesheet" href="main.css">
+<link rel="modulepreload" href="/pyde-wasm-d329589442f53270.js" crossorigin="anonymous" integrity="sha384-/GDs36P9yB7r3TjDsEkRY3AePtt5c2H7TskxQdTEL47EMKgKe34sDo26Ne63tcb9"><link rel="preload" href="/pyde-wasm-708bcb6ec1828744_bg.wasm" crossorigin="anonymous" integrity="sha384-XxNyjZv80RXT06tFyledSwm8g7Qm+F0/EPtivBveY0QUliDkUv1PQ4QA194FKpV4" as="fetch" type="application/wasm"></head>
+<body>
+  <div id="workbench">
+
+    <!-- Title bar -->
+    <header id="titlebar">
+      <div class="titlebar-left">
+        <span class="logo">Py</span>
+        <nav class="menubar" aria-label="Application menu">
+          <button>File</button>
+          <button>Edit</button>
+          <button>Selection</button>
+          <button>View</button>
+          <button>Run</button>
+          <button>Help</button>
+        </nav>
+      </div>
+      <div class="titlebar-center">main.py — Pyde</div>
+      <div class="titlebar-right"></div>
+    </header>
+
+    <div id="main">
+
+      <!-- Activity bar -->
+      <aside id="activitybar" aria-label="Activity bar">
+        <div class="activity-top">
+          <button class="activity-item active" title="Explorer" aria-label="Explorer">
+            <svg viewBox="0 0 24 24"><path d="M17.5 0h-9L7 1.5V6H2.5L1 7.5v15.07L2.5 24h12.07L16 22.57V18h4.7l1.3-1.43V4.5L17.5 0zm0 2.12 2.38 2.38H17.5V2.12zm-3 20.38h-12v-15H7v9.07L8.5 18h6v4.5zm6-6h-12v-15H16V6h4.5v10.5z"/></svg>
+          </button>
+          <button class="activity-item" title="Search" aria-label="Search">
+            <svg viewBox="0 0 24 24"><path d="M15.25 0a8.25 8.25 0 0 0-6.18 13.72L1 22.88l1.12 1 8.05-9.12A8.251 8.251 0 1 0 15.25.01V0zm0 15a6.75 6.75 0 1 1 0-13.5 6.75 6.75 0 0 1 0 13.5z"/></svg>
+          </button>
+          <button class="activity-item" title="Run and Debug" aria-label="Run and Debug">
+            <svg viewBox="0 0 24 24"><path d="M5 3v18l15-9L5 3zm2 3.6L16.4 12 7 17.4V6.6z"/></svg>
+          </button>
+          <button class="activity-item" title="Packages" aria-label="Packages">
+            <svg viewBox="0 0 24 24"><path d="M12 1 2 6v12l10 5 10-5V6L12 1zm0 2.24 6.9 3.45L12 10.13 5.1 6.69 12 3.24zM4 8.3l7 3.5v8.9l-7-3.5V8.3zm9 12.4v-8.9l7-3.5v8.9l-7 3.5z"/></svg>
+          </button>
+        </div>
+        <div class="activity-bottom">
+          <button class="activity-item" title="Settings" aria-label="Settings">
+            <svg viewBox="0 0 24 24"><path d="M19.85 8.75 22 7.5l-2-3.46-2.15 1.25a8 8 0 0 0-1.85-1.07V2h-4v2.22A8 8 0 0 0 10 5.29L7.85 4.04 5.85 7.5 8 8.75a8 8 0 0 0 0 2.5L5.85 12.5l2 3.46L10 14.71a8 8 0 0 0 1.85 1.07V18h4v-2.22a8 8 0 0 0 1.85-1.07l2.15 1.25 2-3.46-2.15-1.25a8 8 0 0 0 0-2.5zM14 13a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" transform="translate(-2 3)"/></svg>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Side bar: Explorer -->
+      <aside id="sidebar" aria-label="Explorer">
+        <div class="sidebar-title">
+          <span>Explorer</span>
+          <span class="sidebar-actions">···</span>
+        </div>
+
+        <div class="tree-section">
+          <div class="tree-header"><span class="chevron open"></span>PYDE-PROJECT</div>
+          <ul id="file-tree" class="tree">
+            <li class="tree-item folder">
+              <span class="chevron open"></span><span class="icon icon-folder"></span>src
+              <ul class="tree">
+                <li class="tree-item file active"><span class="icon icon-py"></span>main.py</li>
+                <li class="tree-item file"><span class="icon icon-py"></span>utils.py</li>
+                <li class="tree-item file"><span class="icon icon-py"></span>__init__.py</li>
+              </ul>
+            </li>
+            <li class="tree-item folder">
+              <span class="chevron"></span><span class="icon icon-folder"></span>tests
+            </li>
+            <li class="tree-item file"><span class="icon icon-md"></span>README.md</li>
+            <li class="tree-item file"><span class="icon icon-toml"></span>pyproject.toml</li>
+          </ul>
+        </div>
+      </aside>
+
+      <div id="sash-sidebar" class="sash" role="separator" aria-orientation="vertical"></div>
+
+      <!-- Editor + panel -->
+      <section id="editor-column">
+
+        <div id="tabs" role="tablist">
+          <div class="tab active" role="tab" aria-selected="true">
+            <span class="icon icon-py"></span><span class="tab-name">main.py</span><span class="tab-close">×</span>
+          </div>
+          <div class="tab" role="tab" aria-selected="false">
+            <span class="icon icon-py"></span><span class="tab-name">utils.py</span><span class="tab-close">×</span>
+          </div>
+        </div>
+
+        <div id="breadcrumbs">src <span class="sep">›</span> <span class="icon icon-py"></span>main.py</div>
+
+        <!-- The WASM editor mounts here; the markup below is a static placeholder. -->
+        <div id="editor">
+          <div id="gutter" aria-hidden="true">
+            <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div>
+            <div>6</div><div>7</div><div>8</div><div>9</div><div>10</div>
+            <div>11</div><div>12</div>
+          </div>
+<pre id="code"><code><span class="tok-kw">from</span> <span class="tok-mod">utils</span> <span class="tok-kw">import</span> <span class="tok-fn">greet</span>
+
+<span class="tok-kw">def</span> <span class="tok-fn">fibonacci</span>(<span class="tok-var">n</span>: <span class="tok-type">int</span>) -&gt; <span class="tok-type">int</span>:
+    <span class="tok-str">"""Return the n-th Fibonacci number."""</span>
+    <span class="tok-kw">if</span> <span class="tok-var">n</span> &lt; <span class="tok-num">2</span>:
+        <span class="tok-kw">return</span> <span class="tok-var">n</span>
+    <span class="tok-kw">return</span> <span class="tok-fn">fibonacci</span>(<span class="tok-var">n</span> - <span class="tok-num">1</span>) + <span class="tok-fn">fibonacci</span>(<span class="tok-var">n</span> - <span class="tok-num">2</span>)
+
+<span class="tok-kw">if</span> <span class="tok-var">__name__</span> == <span class="tok-str">"__main__"</span>:
+    <span class="tok-fn">print</span>(<span class="tok-fn">greet</span>(<span class="tok-str">"Pyde"</span>))
+    <span class="tok-fn">print</span>([<span class="tok-fn">fibonacci</span>(<span class="tok-var">i</span>) <span class="tok-kw">for</span> <span class="tok-var">i</span> <span class="tok-kw">in</span> <span class="tok-fn">range</span>(<span class="tok-num">10</span>)])<span class="cursor"></span>
+</code></pre>
+        </div>
+
+        <div id="sash-panel" class="sash horizontal" role="separator" aria-orientation="horizontal"></div>
+
+        <!-- Bottom panel -->
+        <section id="panel" aria-label="Panel">
+          <div class="panel-tabs">
+            <button>Problems</button>
+            <button>Output</button>
+            <button class="active">Terminal</button>
+          </div>
+          <div id="terminal">
+            <div><span class="prompt">&gt;</span> python main.py</div>
+            <div>Hello, Pyde!</div>
+            <div>[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]</div>
+            <div><span class="prompt">&gt;</span> <span class="cursor"></span></div>
+          </div>
+        </section>
+      </section>
+    </div>
+
+    <!-- Status bar -->
+    <footer id="statusbar">
+      <div class="status-left">
+        <span class="status-item remote">⚡ WASM</span>
+        <span class="status-item">⊗ 0 &nbsp;⚠ 0</span>
+      </div>
+      <div class="status-right">
+        <span class="status-item">Ln 12, Col 54</span>
+        <span class="status-item">Spaces: 4</span>
+        <span class="status-item">UTF-8</span>
+        <span class="status-item">LF</span>
+        <span class="status-item">Python</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Trunk builds the crate and injects the WASM bootstrap. -->
+  
+<script type="module">
+import init, * as bindings from '/pyde-wasm-d329589442f53270.js';
+const wasm = await init({ module_or_path: '/pyde-wasm-708bcb6ec1828744_bg.wasm' });
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script>
+<script>"use strict";
+
+(function () {
+
+    const address = '{{__TRUNK_ADDRESS__}}';
+    const base = '{{__TRUNK_WS_BASE__}}';
+    let protocol = '';
+    protocol =
+        protocol
+            ? protocol
+            : window.location.protocol === 'https:'
+                ? 'wss'
+                : 'ws';
+    const url = protocol + '://' + address + base + '.well-known/trunk/ws';
+
+    class Overlay {
+        constructor() {
+            // create an overlay
+            this._overlay = document.createElement("div");
+            const style = this._overlay.style;
+            style.height = "100vh";
+            style.width = "100vw";
+            style.position = "fixed";
+            style.top = "0";
+            style.left = "0";
+            style.backgroundColor = "rgba(222, 222, 222, 0.5)";
+            style.fontFamily = "sans-serif";
+            // not sure that's the right approach
+            style.zIndex = "1000000";
+            style.backdropFilter = "blur(1rem)";
+
+            const container = document.createElement("div");
+            // center it
+            container.style.position = "absolute";
+            container.style.top = "30%";
+            container.style.left = "15%";
+            container.style.maxWidth = "85%";
+
+            this._title = document.createElement("div");
+            this._title.innerText = "Build failure";
+            this._title.style.paddingBottom = "2rem";
+            this._title.style.fontSize = "2.5rem";
+
+            this._message = document.createElement("div");
+            this._message.style.whiteSpace = "pre-wrap";
+
+            const icon= document.createElement("div");
+            icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#dc3545" viewBox="0 0 16 16"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>';
+            this._title.prepend(icon);
+
+            container.append(this._title, this._message);
+            this._overlay.append(container);
+
+            this._inject();
+            window.setInterval(() => {
+                this._inject();
+            }, 250);
+        }
+
+        set reason(reason) {
+            this._message.textContent = reason;
+        }
+
+        _inject() {
+            if (!this._overlay.isConnected) {
+                // prepend it
+                document.body?.prepend(this._overlay);
+            }
+        }
+
+    }
+
+    class Client {
+        constructor(url) {
+            this.url = url;
+            this.poll_interval = 5000;
+            this._overlay = null;
+        }
+
+        start() {
+            const ws = new WebSocket(this.url);
+            ws.onmessage = (ev) => {
+                const msg = JSON.parse(ev.data);
+                switch (msg.type) {
+                    case "reload":
+                        this.reload();
+                        break;
+                    case "buildFailure":
+                        this.buildFailure(msg.data)
+                        break;
+                }
+            };
+            ws.onclose = () => this.onclose();
+        }
+
+        onclose() {
+            window.setTimeout(
+                () => {
+                    // when we successfully reconnect, we'll force a
+                    // reload (since we presumably lost connection to
+                    // trunk due to it being killed, so it will have
+                    // rebuilt on restart)
+                    const ws = new WebSocket(this.url);
+                    ws.onopen = () => window.location.reload();
+                    ws.onclose = () => this.onclose();
+                },
+                this.poll_interval);
+        }
+
+        reload() {
+            window.location.reload();
+        }
+
+        buildFailure({reason}) {
+            // also log the console
+            console.error("Build failed:", reason);
+
+            console.debug("Overlay", this._overlay);
+
+            if (!this._overlay) {
+                this._overlay = new Overlay();
+            }
+            this._overlay.reason = reason;
+        }
+    }
+
+    new Client(url).start();
+
+})()
+</script></body>
+</html>
