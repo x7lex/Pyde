@@ -8,4 +8,5 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 pyde-core = { path = "../core" }
+console_error_panic_hook = "0.1"
 wasm-bindgen = "0.2"
