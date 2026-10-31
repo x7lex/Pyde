@@ -862,18 +862,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
-name = "monaco"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "908859a2702e5575c12d0b0e373b554144fd0b4b4e29f6726d28837076b238ca"
-dependencies = [
- "js-sys",
- "paste",
- "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
 name = "next_tuple"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1007,8 +995,6 @@ name = "pyde-core"
 version = "0.1.0"
 dependencies = [
  "leptos",
- "monaco",
- "wasm-bindgen",
  "web-sys",
 ]
 

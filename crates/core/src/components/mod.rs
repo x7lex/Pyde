@@ -1,2 +1,2 @@
 pub mod console;
-pub mod monaco;
+pub mod editor;
