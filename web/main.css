@@ -6,6 +6,11 @@
   --fg-muted: #858585;
   --accent: #0e639c;
   --accent-hover: #1177bb;
+  --button: #3a3d41;
+  --button-hover: #45494e;
+  --danger: #a1260d;
+  --danger-hover: #be2f12;
+  --error: #f48771;
   --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-code: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
@@ -52,18 +57,39 @@ body {
   color: var(--fg-muted);
 }
 
-.run {
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.button {
   padding: 3px 14px;
   border: 0;
   border-radius: 2px;
-  background: var(--accent);
+  background: var(--button);
   color: #fff;
   font: inherit;
   cursor: pointer;
 }
 
-.run:hover {
+.button:hover {
+  background: var(--button-hover);
+}
+
+.button.run {
+  background: var(--accent);
+}
+
+.button.run:hover {
   background: var(--accent-hover);
+}
+
+.button.stop {
+  background: var(--danger);
+}
+
+.button.stop:hover {
+  background: var(--danger-hover);
 }
 
 .editor,
@@ -87,4 +113,8 @@ body {
 
 .console {
   white-space: pre-wrap;
+}
+
+.console .error {
+  color: var(--error);
 }

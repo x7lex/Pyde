@@ -1,5 +1,6 @@
 mod app;
 mod components;
+mod files;
 mod python;
 
 pub use app::App;
