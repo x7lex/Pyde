@@ -1,6 +1,7 @@
 target/
 pkg/
 web/node_modules/
+dist/
 .DS_Store
 
 # future purposes

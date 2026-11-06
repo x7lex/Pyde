@@ -1,18 +1,23 @@
-//! Pyodide bridge: owns the Web Worker in `web/python-worker.js`.
+//! Pyodide bridge: owns the Web Worker built from `crates/worker`.
 
 use std::cell::RefCell;
 
-use js_sys::{Array, Object, Reflect};
+use js_sys::{Array, Atomics, Int32Array, Object, Reflect, SharedArrayBuffer, Uint8Array};
 use wasm_bindgen::prelude::*;
-use web_sys::{ErrorEvent, MessageEvent, Worker, WorkerOptions, WorkerType};
+use web_sys::{Event as DomEvent, MessageEvent, Worker, WorkerOptions, WorkerType};
 
-const WORKER_URL: &str = "python-worker.js";
+/// Trunk's generated loader for the `pyde-worker` crate.
+const WORKER_URL: &str = "pyde-worker_loader.js";
+const STDIN_BYTES: u32 = 64 * 1024;
+const STDIN_HEADER_BYTES: u32 = 8;
 
 pub enum Event {
-    /// Pyodide finished loading.
+    /// Pyodide finished loading. Only now can it accept a run.
     Ready,
     /// Lines of program output, as `(text, is_error)`.
     Output(Vec<(String, bool)>),
+    /// The program is blocked in `input()` until `answer` is called.
+    Input { prompt: String },
     /// The program finished.
     Done,
     /// Pyodide could not load. `restart` tries again.
@@ -22,7 +27,10 @@ pub enum Event {
 pub struct Python {
     worker: RefCell<Worker>,
     on_message: Closure<dyn Fn(MessageEvent)>,
-    on_error: Closure<dyn Fn(ErrorEvent)>,
+    on_error: Closure<dyn Fn(DomEvent)>,
+    /// Shared with the worker for `input()`. Browsers only allow this on
+    /// cross-origin isolated pages.
+    stdin: Option<SharedArrayBuffer>,
 }
 
 impl Python {
@@ -30,22 +38,48 @@ impl Python {
     pub fn new(on_event: impl Fn(Event) + Clone + 'static) -> Self {
         let handler = on_event.clone();
         let on_message = Closure::new(move |e: MessageEvent| handler(parse_event(&e.data())));
-        let on_error = Closure::new(move |e: ErrorEvent| on_event(Event::Failed(e.message())));
+        // A worker that fails to load fires a plain Event with no message.
+        let on_error = Closure::new(move |e: DomEvent| {
+            let message = field(&e, "message")
+                .as_string()
+                .unwrap_or_else(|| "the Python worker failed to start".to_string());
+            on_event(Event::Failed(message));
+        });
         let worker = spawn(&on_message, &on_error);
+        let isolated = field(&js_sys::global(), "crossOriginIsolated").is_truthy();
         Self {
             worker: RefCell::new(worker),
             on_message,
             on_error,
+            stdin: isolated.then(|| SharedArrayBuffer::new(STDIN_BYTES)),
         }
     }
 
-    /// Runs `code` as the script `name`. Runs queued while loading start once
-    /// Pyodide is ready.
+    /// Runs `code` as the script `name`. Call only after `Event::Ready`.
     pub fn run(&self, name: &str, code: &str) {
         let message = Object::new();
-        set(&message, "name", name);
-        set(&message, "code", code);
+        set(&message, "name", &JsValue::from_str(name));
+        set(&message, "code", &JsValue::from_str(code));
+        if let Some(stdin) = &self.stdin {
+            set(&message, "stdin", stdin);
+        }
         let _ = self.worker.borrow().post_message(&message);
+    }
+
+    /// Wakes a program blocked in `input()`.
+    pub fn answer(&self, text: &str) {
+        let Some(stdin) = &self.stdin else { return };
+        let mut length = text.len().min((STDIN_BYTES - STDIN_HEADER_BYTES) as usize);
+        while !text.is_char_boundary(length) {
+            length -= 1;
+        }
+        let bytes =
+            Uint8Array::new_with_byte_offset_and_length(stdin, STDIN_HEADER_BYTES, length as u32);
+        bytes.copy_from(&text.as_bytes()[..length]);
+        let flags = Int32Array::new(stdin);
+        flags.set_index(1, length as i32);
+        let _ = Atomics::store(&flags, 0, 1);
+        let _ = Atomics::notify(&flags, 0);
     }
 
     /// Kills the worker, and any program running in it, then loads a new one.
@@ -57,7 +91,7 @@ impl Python {
 
 fn spawn(
     on_message: &Closure<dyn Fn(MessageEvent)>,
-    on_error: &Closure<dyn Fn(ErrorEvent)>,
+    on_error: &Closure<dyn Fn(DomEvent)>,
 ) -> Worker {
     let options = WorkerOptions::new();
     options.set_type(WorkerType::Module);
@@ -69,31 +103,34 @@ fn spawn(
 }
 
 fn parse_event(data: &JsValue) -> Event {
-    let field =
-        |key: &str| Reflect::get(data, &JsValue::from_str(key)).unwrap_or(JsValue::UNDEFINED);
-    let text = |key: &str| field(key).as_string().unwrap_or_default();
+    let text = |key: &str| field(data, key).as_string().unwrap_or_default();
     match text("type").as_str() {
         "ready" => Event::Ready,
         "output" => Event::Output(
-            Array::from(&field("lines"))
+            Array::from(&field(data, "lines"))
                 .iter()
                 .map(parse_line)
                 .collect(),
         ),
+        "input" => Event::Input {
+            prompt: text("prompt"),
+        },
         "done" => Event::Done,
         _ => Event::Failed(text("message")),
     }
 }
 
 fn parse_line(line: JsValue) -> (String, bool) {
-    let field =
-        |key: &str| Reflect::get(&line, &JsValue::from_str(key)).unwrap_or(JsValue::UNDEFINED);
     (
-        field("text").as_string().unwrap_or_default(),
-        field("isError").is_truthy(),
+        field(&line, "text").as_string().unwrap_or_default(),
+        field(&line, "isError").is_truthy(),
     )
 }
 
-fn set(object: &Object, key: &str, value: &str) {
-    let _ = Reflect::set(object, &JsValue::from_str(key), &JsValue::from_str(value));
+fn field(object: &JsValue, key: &str) -> JsValue {
+    Reflect::get(object, &JsValue::from_str(key)).unwrap_or(JsValue::UNDEFINED)
+}
+
+fn set(object: &Object, key: &str, value: &JsValue) {
+    let _ = Reflect::set(object, &JsValue::from_str(key), value);
 }

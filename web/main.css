@@ -111,8 +111,32 @@ body {
   white-space: pre;
 }
 
-.console {
+.console-output {
+  margin: 0;
+  font: inherit;
   white-space: pre-wrap;
+}
+
+.console-notice {
+  margin: 0 0 8px;
+  color: var(--fg-muted);
+  font-style: italic;
+}
+
+.console-input {
+  display: flex;
+  white-space: pre;
+}
+
+.console-input input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
 }
 
 .console .error {

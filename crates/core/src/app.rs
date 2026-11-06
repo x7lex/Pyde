@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use leptos::{ev, prelude::*, task::spawn_local};
-use wasm_bindgen::JsValue;
+use web_sys::FileSystemFileHandle;
 
 use crate::components::{
     console::{Console, Line},
@@ -20,11 +20,15 @@ pub fn App() -> impl IntoView {
     let code = RwSignal::new(STARTER.to_string());
     let saved_code = RwSignal::new(STARTER.to_string());
     let file_name = RwSignal::new("main.py".to_string());
-    let file_handle = StoredValue::new_local(JsValue::NULL);
+    let file_handle = StoredValue::new_local(None::<FileSystemFileHandle>);
 
     let output = RwSignal::new(Vec::<Line>::new());
     let loaded = RwSignal::new(false);
     let load_failed = RwSignal::new(false);
+    // Run pressed before Pyodide is ready: (name, code) to run once it is.
+    let queued_run = StoredValue::new(None::<(String, String)>);
+    let truncated = RwSignal::new(false);
+    let prompt = RwSignal::new(None::<String>);
     let running = RwSignal::new(false);
 
     // Output can far outpace rendering, so lines collect in `pending` and reach
@@ -37,6 +41,9 @@ pub fn App() -> impl IntoView {
             return;
         }
         new_lines.drain(..new_lines.len().saturating_sub(MAX_LINES));
+        if output.with_untracked(Vec::len) + new_lines.len() > MAX_LINES {
+            truncated.set(true);
+        }
         output.update(|lines| {
             lines.extend(new_lines.into_iter().map(|(text, is_error)| {
                 let id = next_id.get_value();
@@ -60,32 +67,61 @@ pub fn App() -> impl IntoView {
             loaded.set(true);
         }
         Event::Output(lines) => print_lines(lines),
+        Event::Input { prompt: text } => {
+            flush();
+            prompt.set(Some(text));
+        }
         Event::Done => {
             flush();
             running.set(false);
         }
         Event::Failed(message) => {
             load_failed.set(true);
+            queued_run.set_value(None);
             running.set(false);
             print_error(format!("Could not load Python: {message}"));
         }
     }));
 
+    Effect::new(move || {
+        if loaded.get()
+            && let Some((name, text)) = queued_run.try_update_value(Option::take).flatten()
+        {
+            python.with_value(|python| python.run(&name, &text));
+        }
+    });
+
     let run = move || {
         pending.update_value(Vec::clear);
         output.update(Vec::clear);
+        truncated.set(false);
         running.set(true);
+        let name = file_name.get_untracked();
+        let text = code.get_untracked();
         python.with_value(|python| {
             if load_failed.get_untracked() {
                 load_failed.set(false);
                 python.restart();
             }
-            python.run(&file_name.get_untracked(), &code.get_untracked());
+            if loaded.get_untracked() {
+                python.run(&name, &text);
+            } else {
+                queued_run.set_value(Some((name, text)));
+            }
         });
     };
 
+    let answer = Callback::new(move |text: String| {
+        let asked = prompt.get_untracked().unwrap_or_default();
+        prompt.set(None);
+        python.with_value(|python| python.answer(&text));
+        print_lines(vec![(format!("{asked}{text}"), false)]);
+    });
+
     let stop = move || {
         python.with_value(Python::restart);
+        queued_run.set_value(None);
+        prompt.set(None);
         loaded.set(false);
         running.set(false);
         print_error("Stopped.".to_string());
@@ -189,7 +225,13 @@ pub fn App() -> impl IntoView {
                     <span>"Output"</span>
                     <span>{status}</span>
                 </header>
-                <Console lines=output />
+                <Console
+                    lines=output
+                    max_lines=MAX_LINES
+                    truncated=truncated
+                    prompt=prompt
+                    on_answer=answer
+                />
             </section>
         </main>
     }
