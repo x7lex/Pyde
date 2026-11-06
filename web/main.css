@@ -11,6 +11,14 @@
   --danger: #a1260d;
   --danger-hover: #be2f12;
   --error: #f48771;
+  --tok-comment: #6a9955;
+  --tok-string: #ce9178;
+  --tok-number: #b5cea8;
+  --tok-control: #c586c0;
+  --tok-keyword: #569cd6;
+  --tok-function: #dcdcaa;
+  --tok-type: #4ec9b0;
+  --tok-variable: #9cdcfe;
   --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-code: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
@@ -92,23 +100,94 @@ body {
   background: var(--danger-hover);
 }
 
-.editor,
-.console {
-  flex: 1;
-  margin: 0;
+.console,
+.editor-colours code,
+.editor-input {
   padding: 12px;
-  overflow: auto;
-  background: var(--bg);
   color: var(--fg);
   font: 14px/1.5 var(--font-code);
   tab-size: 4;
 }
 
+.console {
+  flex: 1;
+  overflow: auto;
+  background: var(--bg);
+}
+
 .editor {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: var(--bg);
+}
+
+.editor-colours,
+.editor-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.editor-colours {
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.editor-colours code {
+  display: block;
+  width: max-content;
+  white-space: pre;
+}
+
+.editor-input {
   border: 0;
   outline: none;
+  overflow: auto;
   resize: none;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--fg);
   white-space: pre;
+}
+
+/* See-through, because the coloured text is underneath the textarea. */
+.editor-input::selection {
+  background: rgba(38, 79, 120, 0.6);
+}
+
+.tok-comment {
+  color: var(--tok-comment);
+}
+
+.tok-string {
+  color: var(--tok-string);
+}
+
+.tok-number {
+  color: var(--tok-number);
+}
+
+.tok-control {
+  color: var(--tok-control);
+}
+
+.tok-keyword {
+  color: var(--tok-keyword);
+}
+
+.tok-function {
+  color: var(--tok-function);
+}
+
+.tok-type {
+  color: var(--tok-type);
+}
+
+.tok-variable {
+  color: var(--tok-variable);
 }
 
 .console-output {
