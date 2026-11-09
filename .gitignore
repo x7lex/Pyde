@@ -1,8 +1,8 @@
-target/
-pkg/
-web/node_modules/
-dist/
+.direnv/
+.idea/
+.vscode/
+.env
 .DS_Store
 
-# future purposes
-.env
+target/
+dist/

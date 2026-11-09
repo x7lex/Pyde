@@ -1,8 +1,7 @@
 [build]
 target = "web/index.html"
 
-# input() needs SharedArrayBuffer, which browsers only allow with these headers.
-# A production host must send them too.
+# Required by input()
 [serve.headers]
 Cross-Origin-Opener-Policy = "same-origin"
 Cross-Origin-Embedder-Policy = "require-corp"

@@ -1,4 +1,4 @@
-# PyDE
+# PyDE :3
 
 > [!WARNING]  
 > PyDE is currently in early development, so features like syntax highlighting may be prone to bugs.

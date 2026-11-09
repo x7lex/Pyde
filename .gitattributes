@@ -1,0 +1,5 @@
+*.yaml linguist-detectable=true
+*.json linguist-detectable=true
+*.toml linguist-detectable=true
+*lock.json linguist-vendored
+*.lock linguist-vendored
