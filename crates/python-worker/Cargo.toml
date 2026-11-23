@@ -1,0 +1,26 @@
+[package]
+name = "pyde-python-worker"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+console_error_panic_hook.workspace = true
+js-sys.workspace = true
+pyde-js.workspace = true
+serde_json.workspace = true
+wasm-bindgen.workspace = true
+wasm-bindgen-futures.workspace = true
+web-sys = { workspace = true, features = [
+  "DedicatedWorkerGlobalScope",
+  "MessageEvent",
+] }
+
+[dev-dependencies]
+ruff_python_ast.workspace = true
+ruff_python_parser.workspace = true
+
+[lints]
+workspace = true

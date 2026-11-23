@@ -1,7 +1,7 @@
 [build]
 target = "web/index.html"
 
-# Required by input()
+# `input()` needs the page to be cross-origin isolated.
 [serve.headers]
 Cross-Origin-Opener-Policy = "same-origin"
 Cross-Origin-Embedder-Policy = "require-corp"

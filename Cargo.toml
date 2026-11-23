@@ -1,7 +1,47 @@
 [workspace]
 resolver = "2"
 members = [
-    "crates/core",
-    "crates/wasm",
-    "crates/worker",
+  "crates/analysis",
+  "crates/app",
+  "crates/js",
+  "crates/python-worker",
+  "crates/ty-worker",
+  "crates/wasm",
 ]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+
+[workspace.dependencies]
+pyde-analysis = { path = "crates/analysis" }
+pyde-app = { path = "crates/app" }
+pyde-js = { path = "crates/js" }
+
+console_error_panic_hook = "0.1"
+js-sys = "0.3"
+leptos = { version = "0.8.22", features = ["csr"] }
+rustc-hash = "2.1.3"
+salsa = "0.28.5"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+web-sys = "0.3"
+
+ruff_db = "0.0.23"
+ruff_python_ast = "0.0.23"
+ruff_python_formatter = "0.0.23"
+ruff_python_parser = "0.0.23"
+ruff_source_file = "0.0.23"
+ruff_text_size = "0.0.23"
+ty_module_resolver = "0.0.23"
+# The `testing` features expose Ty's in-memory `TestSystem`, which is the
+# checker's file system.
+ty_python_core = { version = "0.0.23", features = ["testing"] }
+ty_python_semantic = { version = "0.0.23", features = ["testing"] }
+ty_site_packages = "0.0.23"
+ty_vendored = "0.0.23"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }

@@ -1,12 +1,34 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pyde</title>
-  <link data-trunk rel="css" href="main.css">
-  <link data-trunk rel="rust" href="../crates/wasm/Cargo.toml" data-wasm-opt="z">
-  <link data-trunk rel="rust" href="../crates/worker/Cargo.toml" data-type="worker" data-bindgen-target="web" data-loader-shim data-wasm-opt="z">
-</head>
-<body></body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pyde</title>
+    <link data-trunk rel="css" href="main.css" />
+    <link
+      data-trunk
+      rel="rust"
+      href="../crates/wasm/Cargo.toml"
+      data-wasm-opt="z"
+    />
+    <link
+      data-trunk
+      rel="rust"
+      href="../crates/ty-worker/Cargo.toml"
+      data-type="worker"
+      data-bindgen-target="web"
+      data-loader-shim
+      data-wasm-opt="z"
+    />
+    <link
+      data-trunk
+      rel="rust"
+      href="../crates/python-worker/Cargo.toml"
+      data-type="worker"
+      data-bindgen-target="web"
+      data-loader-shim
+      data-wasm-opt="z"
+    />
+  </head>
+  <body></body>
 </html>

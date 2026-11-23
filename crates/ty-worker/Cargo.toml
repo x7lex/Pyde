@@ -1,0 +1,32 @@
+[package]
+name = "pyde-ty-worker"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+console_error_panic_hook.workspace = true
+js-sys.workspace = true
+pyde-analysis.workspace = true
+pyde-js.workspace = true
+ruff_db.workspace = true
+ruff_python_ast.workspace = true
+ruff_source_file.workspace = true
+ruff_text_size.workspace = true
+rustc-hash.workspace = true
+salsa.workspace = true
+ty_module_resolver.workspace = true
+ty_python_core.workspace = true
+ty_python_semantic.workspace = true
+ty_site_packages.workspace = true
+ty_vendored.workspace = true
+wasm-bindgen.workspace = true
+web-sys = { workspace = true, features = [
+  "DedicatedWorkerGlobalScope",
+  "MessageEvent",
+] }
+
+[lints]
+workspace = true

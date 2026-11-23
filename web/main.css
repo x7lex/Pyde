@@ -1,27 +1,85 @@
+/*
+ * Pyde stylesheet.
+ *
+ * Class names are `block`, `block-part`, and `is-state`. Colours, type, spacing
+ * and shape come from the tokens below, never from literals further down.
+ *
+ *   1. Tokens   2. Base   3. Layout   4. Controls
+ *   5. Editor   6. Hover card   7. Console   8. Problems
+ */
+
+/* 1. Tokens ---------------------------------------------------------------- */
+
 :root {
+  /* Surfaces and text */
   --bg: #1e1e1e;
   --bg-header: #252526;
   --border: #2b2b2b;
   --fg: #d4d4d4;
+  --fg-strong: #fff;
   --fg-muted: #858585;
+
+  /* Actions */
   --accent: #0e639c;
   --accent-hover: #1177bb;
   --button: #3a3d41;
   --button-hover: #45494e;
   --danger: #a1260d;
   --danger-hover: #be2f12;
+
+  /* Severity */
   --error: #f48771;
-  --tok-comment: #6a9955;
-  --tok-string: #ce9178;
-  --tok-number: #b5cea8;
-  --tok-control: #c586c0;
-  --tok-keyword: #569cd6;
-  --tok-function: #dcdcaa;
-  --tok-type: #4ec9b0;
-  --tok-variable: #9cdcfe;
-  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --warning: #cca700;
+  --info: #3794ff;
+
+  /* Syntax */
+  --token-comment: #6a9955;
+  --token-string: #ce9178;
+  --token-number: #b5cea8;
+  --token-control: #c586c0;
+  --token-keyword: #569cd6;
+  --token-function: #dcdcaa;
+  --token-type: #4ec9b0;
+  --token-variable: #9cdcfe;
+
+  /* Overlays: selection and floating cards */
+  --selection: rgba(38, 79, 120, 0.6);
+  --overlay-border: rgba(255, 255, 255, 0.12);
+  --overlay-divider: rgba(255, 255, 255, 0.08);
+  --overlay-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+
+  /* Indent guides: one column count shared by the text and the lines */
+  --indent-size: 4;
+  --indent-guide: #353535;
+  --guide-overlap: 0.3em;
+
+  /* Type */
+  --font-ui:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-code: Menlo, Monaco, Consolas, "Courier New", monospace;
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-md: 13px;
+  --text-lg: 14px;
+  --leading-ui: 1.4;
+  --leading-code: 1.5;
+
+  /* Spacing, shape, motion */
+  --space-xs: 2px;
+  --space-sm: 4px;
+  --space-md: 6px;
+  --space-lg: 8px;
+  --space-xl: 12px;
+  --radius: 2px;
+  --border-width: 1px;
+  --indicator-width: 2px;
+  --underline-offset: 3px;
+  --focus-ring: var(--border-width) solid var(--accent-hover);
+  --header-height: 36px;
+  --transition: 0.1s ease;
 }
+
+/* 2. Base ------------------------------------------------------------------ */
 
 *,
 *::before,
@@ -35,8 +93,32 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font: 13px/1.4 var(--font-ui);
+  font: var(--text-md) / var(--leading-ui) var(--font-ui);
 }
+
+/* Severity states set one colour, which each block then uses its own way. */
+.is-error,
+.mark-error {
+  --severity: var(--error);
+}
+
+.is-warning,
+.mark-warning {
+  --severity: var(--warning);
+}
+
+.is-info,
+.mark-info {
+  --severity: var(--info);
+}
+
+.notice {
+  margin: 0 0 var(--space-lg);
+  color: var(--fg-muted);
+  font-style: italic;
+}
+
+/* 3. Layout ---------------------------------------------------------------- */
 
 .split {
   display: grid;
@@ -51,31 +133,57 @@ body {
 }
 
 .pane + .pane {
-  border-left: 1px solid var(--border);
+  border-left: var(--border-width) solid var(--border);
 }
 
 .pane-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 36px;
-  padding: 0 12px;
+  gap: var(--space-xl);
+  height: var(--header-height);
+  padding: 0 var(--space-xl);
   background: var(--bg-header);
-  border-bottom: 1px solid var(--border);
+  border-bottom: var(--border-width) solid var(--border);
   color: var(--fg-muted);
 }
 
-.actions {
+.pane-actions {
   display: flex;
-  gap: 6px;
+  flex: none;
+  gap: var(--space-md);
+}
+
+/* Side by side the left header can't fit its buttons below this width, so the
+   panes stack instead. */
+@media (max-width: 760px) {
+  .split {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .pane + .pane {
+    border-top: var(--border-width) solid var(--border);
+    border-left: 0;
+  }
+}
+
+/* 4. Controls -------------------------------------------------------------- */
+
+.button,
+.tab,
+.problem {
+  transition:
+    background var(--transition),
+    color var(--transition);
 }
 
 .button {
-  padding: 3px 14px;
+  padding: var(--space-sm) var(--space-xl);
   border: 0;
-  border-radius: 2px;
+  border-radius: var(--radius);
   background: var(--button);
-  color: #fff;
+  color: var(--fg-strong);
   font: inherit;
   cursor: pointer;
 }
@@ -84,41 +192,152 @@ body {
   background: var(--button-hover);
 }
 
-.button.run {
+.button.is-primary {
   background: var(--accent);
 }
 
-.button.run:hover {
+.button.is-primary:hover {
   background: var(--accent-hover);
 }
 
-.button.stop {
+.button.is-danger {
   background: var(--danger);
 }
 
-.button.stop:hover {
+.button.is-danger:hover {
   background: var(--danger-hover);
 }
 
+.tabs {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  height: var(--header-height);
+  padding: 0 var(--space-xl);
+  border: 0;
+  border-bottom: var(--indicator-width) solid transparent;
+  background: transparent;
+  color: var(--fg-muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--fg);
+}
+
+.tab.is-active {
+  color: var(--fg);
+  border-bottom-color: var(--accent);
+}
+
+/* Keyboard focus, drawn inside the box so the header doesn't clip it. */
+.button:focus-visible,
+.tab:focus-visible,
+.file-name:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: calc(-1 * var(--border-width));
+}
+
+/* The file name: one line that is cut with an ellipsis when it doesn't fit, and
+   a field as wide as the name once clicked. The header shrinks it, never the
+   buttons beside it. */
+.file-name,
+.file-name-field {
+  min-width: 0;
+  max-width: 100%;
+  height: calc(var(--header-height) - 2 * var(--space-md));
+  margin: 0 0 0 calc(-1 * var(--space-md));
+}
+
+.file-name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 0 calc(var(--space-md) - var(--border-width));
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: text;
+  transition:
+    background var(--transition),
+    color var(--transition);
+}
+
+.file-name:hover {
+  background: var(--button);
+  color: var(--fg);
+}
+
+.file-name-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The dot stays visible however long the name is. */
+.file-name-marker {
+  flex: none;
+}
+
+/* The field sits over an invisible copy of its own text, which is what gives the
+   box the width of the name. */
+.file-name-field {
+  display: inline-grid;
+  grid-template-columns: minmax(0, auto);
+  min-width: 4em;
+}
+
+.file-name-sizer,
+.file-name-input {
+  grid-area: 1 / 1;
+  min-width: 0;
+  padding: 0 calc(var(--space-md) - var(--border-width));
+  border: var(--border-width) solid transparent;
+  font: inherit;
+}
+
+.file-name-sizer {
+  overflow: hidden;
+  visibility: hidden;
+  white-space: pre;
+}
+
+.file-name-input {
+  width: 100%;
+  outline: none;
+  border-color: var(--accent);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* 5. Editor ---------------------------------------------------------------- */
+
+/* The coloured copy, the textarea over it and the console share one text
+   style, so the copy lines up with what is typed. */
 .console,
 .editor-colours code,
 .editor-input {
-  padding: 12px;
+  padding: var(--space-xl);
   color: var(--fg);
-  font: 14px/1.5 var(--font-code);
-  tab-size: 4;
-}
-
-.console {
-  flex: 1;
-  overflow: auto;
-  background: var(--bg);
+  font: var(--text-lg) / var(--leading-code) var(--font-code);
+  tab-size: var(--indent-size);
 }
 
 .editor {
   position: relative;
   flex: 1;
   min-height: 0;
+  overflow: hidden;
   background: var(--bg);
 }
 
@@ -155,39 +374,167 @@ body {
 
 /* See-through, because the coloured text is underneath the textarea. */
 .editor-input::selection {
-  background: rgba(38, 79, 120, 0.6);
+  background: var(--selection);
 }
 
-.tok-comment {
-  color: var(--tok-comment);
+.token-comment {
+  color: var(--token-comment);
 }
 
-.tok-string {
-  color: var(--tok-string);
+.token-string {
+  color: var(--token-string);
 }
 
-.tok-number {
-  color: var(--tok-number);
+.token-number {
+  color: var(--token-number);
 }
 
-.tok-control {
-  color: var(--tok-control);
+.token-control {
+  color: var(--token-control);
 }
 
-.tok-keyword {
-  color: var(--tok-keyword);
+.token-keyword {
+  color: var(--token-keyword);
 }
 
-.tok-function {
-  color: var(--tok-function);
+.token-function {
+  color: var(--token-function);
 }
 
-.tok-type {
-  color: var(--tok-type);
+.token-type,
+.token-builtin {
+  color: var(--token-type);
 }
 
-.tok-variable {
-  color: var(--tok-variable);
+.token-variable {
+  color: var(--token-variable);
+}
+
+.token-parameter {
+  color: var(--token-variable);
+  font-style: italic;
+}
+
+/* Marks sit over tokens: diagnostics and dead code. */
+.mark-error,
+.mark-warning,
+.mark-info {
+  text-decoration: underline wavy var(--severity);
+  text-decoration-skip-ink: none;
+  text-underline-offset: var(--underline-offset);
+}
+
+.mark-unreachable {
+  opacity: 0.45;
+  filter: grayscale(35%);
+}
+
+.mark-unused {
+  opacity: 0.65;
+  text-decoration: underline dotted var(--fg-muted);
+}
+
+/* An inline box is only as tall as its text, which leaves a gap between lines.
+   Vertical padding is painted but takes no space, so it bridges the gap. */
+.indent-guide {
+  box-shadow: inset var(--border-width) 0 0 var(--indent-guide);
+  padding: var(--guide-overlap) 0;
+}
+
+/* An empty line has no text to put guides on, so each level gets an empty box
+   as wide as an indent and as tall as a line, drawn like the guides above. It
+   is a plain box and not a gradient, because a gradient is smoothed at the
+   fractional widths of `ch`, which would make these lines fainter. */
+.indent-bridge {
+  display: inline-block;
+  box-sizing: content-box;
+  vertical-align: top;
+  width: calc(var(--indent-size) * 1ch);
+  height: calc(var(--leading-code) * 1em);
+  margin: calc(-1 * var(--guide-overlap)) 0;
+  padding: var(--guide-overlap) 0;
+  box-shadow: inset var(--border-width) 0 0 var(--indent-guide);
+}
+
+/* 6. Hover card ------------------------------------------------------------ */
+
+.hover-card {
+  position: absolute;
+  z-index: 100;
+  width: max-content;
+  overflow: hidden;
+  background: var(--bg-header);
+  border: var(--border-width) solid var(--overlay-border);
+  border-radius: var(--radius);
+  box-shadow: var(--overlay-shadow);
+  color: var(--fg);
+  font: var(--text-sm) / var(--leading-ui) var(--font-ui);
+  pointer-events: none;
+}
+
+.hover-card-diagnostic,
+.hover-card-signature,
+.hover-card-doc {
+  padding: var(--space-md) var(--space-xl);
+}
+
+.hover-card > * + * {
+  border-top: var(--border-width) solid var(--overlay-divider);
+}
+
+.hover-card-diagnostic {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  background: color-mix(in srgb, var(--severity) 8%, transparent);
+}
+
+.hover-card-icon {
+  color: var(--severity);
+  font-weight: bold;
+}
+
+.hover-card-message {
+  flex: 1;
+}
+
+.hover-card-rule {
+  color: var(--fg-muted);
+  font-family: var(--font-code);
+  font-size: var(--text-xs);
+}
+
+.hover-card-signature {
+  background: var(--bg);
+}
+
+.hover-card-signature code {
+  display: block;
+  font: var(--text-sm) / var(--leading-ui) var(--font-code);
+}
+
+.hover-card-kind {
+  color: var(--fg-muted);
+  font-family: var(--font-ui);
+}
+
+.hover-card-doc {
+  padding-block: var(--space-lg);
+}
+
+.hover-card-signature code,
+.hover-card-doc {
+  white-space: pre-wrap;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+/* 7. Console --------------------------------------------------------------- */
+
+.console {
+  flex: 1;
+  overflow: auto;
+  background: var(--bg);
 }
 
 .console-output {
@@ -196,10 +543,8 @@ body {
   white-space: pre-wrap;
 }
 
-.console-notice {
-  margin: 0 0 8px;
-  color: var(--fg-muted);
-  font-style: italic;
+.console-line.is-error {
+  color: var(--severity);
 }
 
 .console-input {
@@ -218,6 +563,63 @@ body {
   font: inherit;
 }
 
-.console .error {
-  color: var(--error);
+/* 8. Problems -------------------------------------------------------------- */
+
+.problems {
+  flex: 1;
+  overflow: auto;
+  padding: var(--space-xl);
+  background: var(--bg);
+}
+
+.problems-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.problem {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-md) var(--space-xl);
+  border: var(--border-width) solid var(--border);
+  border-left: var(--indicator-width) solid var(--severity);
+  border-radius: var(--radius);
+  background: var(--bg-header);
+  cursor: pointer;
+}
+
+.problem:hover {
+  background: var(--button);
+}
+
+.problem-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xs);
+}
+
+.problem-rule {
+  color: var(--fg);
+  font-family: var(--font-code);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.problem-location {
+  color: var(--fg-muted);
+  font-family: var(--font-code);
+  font-size: var(--text-xs);
+}
+
+.problem-message {
+  font-size: var(--text-sm);
+}
+
+.problem-help {
+  margin-top: var(--space-sm);
+  color: var(--fg-muted);
+  font-size: var(--text-xs);
+  font-style: italic;
 }

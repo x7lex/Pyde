@@ -1,0 +1,37 @@
+[package]
+name = "pyde-app"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+js-sys.workspace = true
+leptos.workspace = true
+pyde-analysis.workspace = true
+pyde-js.workspace = true
+wasm-bindgen.workspace = true
+wasm-bindgen-futures.workspace = true
+web-sys = { workspace = true, features = [
+  "Blob",
+  "BlobPropertyBag",
+  "CssStyleDeclaration",
+  "Document",
+  "DomRect",
+  "Element",
+  "File",
+  "FileList",
+  "FileSystemFileHandle",
+  "FileSystemWritableFileStream",
+  "HtmlAnchorElement",
+  "HtmlDocument",
+  "HtmlElement",
+  "HtmlInputElement",
+  "HtmlTextAreaElement",
+  "KeyboardEvent",
+  "Node",
+  "Url",
+  "Window",
+  "WritableStream",
+] }
+
+[lints]
+workspace = true

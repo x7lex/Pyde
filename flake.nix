@@ -23,7 +23,11 @@
         (treefmt.lib.evalModule pkgs {
           projectRootFile = "flake.nix";
           programs.nixfmt.enable = true;
+          programs.leptosfmt.enable = true;
           programs.rustfmt.enable = true;
+          # Both format `*.rs`: the `view!` blocks first, then the rest.
+          settings.formatter.leptosfmt.priority = 1;
+          settings.formatter.rustfmt.priority = 2;
           programs.taplo.enable = true;
           programs.prettier.enable = true;
         }).config.build.wrapper

@@ -1,0 +1,18 @@
+[package]
+name = "pyde-js"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+js-sys.workspace = true
+wasm-bindgen.workspace = true
+web-sys = { workspace = true, features = [
+  "Event",
+  "MessageEvent",
+  "Worker",
+  "WorkerOptions",
+  "WorkerType",
+] }
+
+[lints]
+workspace = true
