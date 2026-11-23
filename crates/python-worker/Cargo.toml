@@ -18,9 +18,5 @@ web-sys = { workspace = true, features = [
   "MessageEvent",
 ] }
 
-[dev-dependencies]
-ruff_python_ast.workspace = true
-ruff_python_parser.workspace = true
-
 [lints]
 workspace = true

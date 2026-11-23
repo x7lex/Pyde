@@ -1599,8 +1599,6 @@ dependencies = [
  "console_error_panic_hook",
  "js-sys",
  "pyde-js",
- "ruff_python_ast",
- "ruff_python_parser",
  "serde_json",
  "wasm-bindgen",
  "wasm-bindgen-futures",

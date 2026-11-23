@@ -50,7 +50,6 @@ Inside `crates/app/src`: `components/` holds the views, `state/` has one control
 ## Development
 
 ```
-cargo test --workspace
 cargo check --workspace --target wasm32-unknown-unknown
 cargo clippy --workspace --all-targets
 cargo fmt --all

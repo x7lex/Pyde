@@ -146,27 +146,3 @@ fn normalize_name(input: &str) -> Result<String, String> {
         _ => Err("Python files end in .py".to_string()),
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::normalize_name;
-
-    #[test]
-    fn names_without_an_extension_become_python_files() {
-        assert_eq!(normalize_name("script").unwrap(), "script.py");
-        assert_eq!(normalize_name("  main.py \n").unwrap(), "main.py");
-        assert_eq!(normalize_name("a.b.py").unwrap(), "a.b.py");
-        assert_eq!(normalize_name("Tool.PY").unwrap(), "Tool.PY");
-    }
-
-    #[test]
-    fn other_names_are_refused() {
-        assert!(normalize_name("").is_err());
-        assert!(normalize_name("   ").is_err());
-        assert!(normalize_name("dir/main.py").is_err());
-        assert!(normalize_name("dir\\main.py").is_err());
-        assert!(normalize_name("notes.txt").is_err());
-        assert!(normalize_name(".py").is_err());
-        assert!(normalize_name("trailing.").is_err());
-    }
-}

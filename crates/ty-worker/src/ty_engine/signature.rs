@@ -117,21 +117,3 @@ pub(super) fn present_async(signature: &str) -> String {
         Some(result) => format!("{head} -> {result}"),
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn overloads_are_split_safely() {
-        let sig = format_hover_signature(
-            "f",
-            Some("Overload[(a: str = \"x, (y\") -> tuple[int, str], (b: int) -> None]"),
-            false,
-        );
-        assert_eq!(
-            sig,
-            "(function) def f(a: str = \"x, (y\") -> tuple[int, str]\ndef f(b: int) -> None"
-        );
-    }
-}

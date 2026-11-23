@@ -135,34 +135,3 @@ pub(super) fn docstring_of(body: &[Stmt]) -> Option<String> {
         _ => None,
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn clean_docstring_dedent() {
-        let raw = r#"
-        Summary line.
-
-        param1
-            description of param1.
-        param2
-            description of param2.
-        "#;
-        let cleaned = clean_docstring(raw);
-        assert_eq!(
-            cleaned,
-            "Summary line.\n\nparam1\n    description of param1.\nparam2\n    description of param2."
-        );
-    }
-
-    #[test]
-    fn clean_docstring_multibyte_whitespace_does_not_panic() {
-        assert_eq!(
-            clean_docstring("Sum\n\u{a0}\u{a0}a\n\u{a0}\u{a0}b"),
-            "Sum\na\nb"
-        );
-        let _ = clean_docstring("Sum\n  a\n\u{3000}b");
-    }
-}

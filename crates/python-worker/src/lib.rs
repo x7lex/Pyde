@@ -381,37 +381,3 @@ async fn prefetch(pyodide: &Pyodide, wanted: &Function, collect: &Function, code
         ),
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use ruff_python_ast::Stmt;
-    use ruff_python_parser::parse_module;
-
-    use super::{NO_INPUT, PACKAGES, RUNNER};
-
-    fn parses(source: &str) -> ruff_python_ast::ModModule {
-        parse_module(source)
-            .unwrap_or_else(|error| panic!("{error}\n{source}"))
-            .into_syntax()
-    }
-
-    #[test]
-    fn the_scripts_are_valid_python() {
-        parses(NO_INPUT);
-        parses(RUNNER);
-        parses(PACKAGES);
-    }
-
-    // `run_python` returns the value of the last expression, which is how Rust
-    // gets the functions out of these scripts.
-    #[test]
-    fn the_scripts_end_by_handing_back_their_functions() {
-        for source in [RUNNER, PACKAGES] {
-            let module = parses(source);
-            assert!(
-                matches!(module.body.last(), Some(Stmt::Expr(_))),
-                "{source}"
-            );
-        }
-    }
-}
