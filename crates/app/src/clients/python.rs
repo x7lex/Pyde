@@ -1,4 +1,4 @@
-//! The page's side of the Pyodide worker built from `crates/python-worker`.
+//! The page's side of the Pyodide worker built from `crates/workers/python`.
 //! Every call is a message; answers arrive later through `PythonEvent`.
 
 use std::cell::RefCell;

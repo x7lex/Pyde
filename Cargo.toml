@@ -1,11 +1,11 @@
 [workspace]
 resolver = "2"
 members = [
-  "crates/analysis",
+  "crates/shared/analysis",
   "crates/app",
-  "crates/js",
-  "crates/python-worker",
-  "crates/ty-worker",
+  "crates/shared/js",
+  "crates/workers/python",
+  "crates/workers/ty",
   "crates/wasm",
 ]
 
@@ -14,9 +14,9 @@ version = "0.1.0"
 edition = "2024"
 
 [workspace.dependencies]
-pyde-analysis = { path = "crates/analysis" }
+pyde-analysis = { path = "crates/shared/analysis" }
 pyde-app = { path = "crates/app" }
-pyde-js = { path = "crates/js" }
+pyde-js = { path = "crates/shared/js" }
 
 console_error_panic_hook = "0.1"
 js-sys = "0.3"

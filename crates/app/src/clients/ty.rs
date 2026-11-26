@@ -1,4 +1,4 @@
-//! The page's side of the type-checker worker built from `crates/ty-worker`.
+//! The page's side of the type-checker worker built from `crates/workers/ty`.
 //! Every call is a message; answers arrive later through `TyEvent` or the
 //! callback passed to `hover`.
 

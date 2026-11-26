@@ -35,15 +35,15 @@ This will output to `dist/` where you can serve it somewhere else.
 
 ## Layout
 
-| Crate                  | What it is                                                                                                                            |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `crates/wasm`          | The page's entry point.                                                                                                               |
-| `crates/app`           | The user interface: components, state, and editing logic.                                                                             |
-| `crates/analysis`      | Syntax colouring (`highlight/`), formatting, and the messages the type checker sends. Shared by the page and the type-checker worker. |
-| `crates/ty-worker`     | The Ty type checker, running in a Web Worker. `ty_engine/` splits it into the database, checking, hover, signatures and docstrings.   |
-| `crates/python-worker` | Pyodide, running in a Web Worker. Its Python helpers are plain files in `python/`.                                                    |
-| `crates/js`            | Messaging helpers shared by the page and both workers.                                                                                |
-| `web/`                 | `index.html` and the single stylesheet, `main.css`.                                                                                   |
+| Crate                    | What it is                                                                                                                            |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `crates/wasm`            | The page's entry point.                                                                                                               |
+| `crates/app`             | The user interface: components, state, and editing logic.                                                                             |
+| `crates/shared/analysis` | Syntax colouring (`highlight/`), formatting, and the messages the type checker sends. Shared by the page and the type-checker worker. |
+| `crates/shared/js`       | Messaging helpers shared by the page and both workers.                                                                                |
+| `crates/workers/ty`      | The Ty type checker, running in a Web Worker. `ty_engine/` splits it into the database, checking, hover, signatures and docstrings.   |
+| `crates/workers/python`  | Pyodide, running in a Web Worker. Its Python helpers are plain files in `python/`.                                                    |
+| `web/`                   | `index.html` and the single stylesheet, `main.css`.                                                                                   |
 
 Inside `crates/app/src`: `components/` holds the views, `state/` has one controller per concern (document, type checker, runner, status), `clients/` talks to the two workers, and `editing/` holds indentation, text layout, and textarea edits.
 

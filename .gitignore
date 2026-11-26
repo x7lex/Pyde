@@ -1,8 +1,9 @@
 .direnv/
 .idea/
 .vscode/
-.env
-.DS_Store
-
 target/
 dist/
+web/pkg/
+
+.env
+.DS_Store
